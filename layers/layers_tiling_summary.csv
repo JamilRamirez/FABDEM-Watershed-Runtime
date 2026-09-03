@@ -1,0 +1,14 @@
+"SOURCE","SOURCE_SIZE_MB","STATUS","OUTPUT_DIR","N_TILES","MAX_TILE_MB"
+"clima_superficie/CUM_normalizada_disuelto.gpkg",9.887,"small_keep_as_is",NA,1,9.887
+"clima_superficie/clima_normalizada_disuelto.gpkg",35.812,"small_keep_as_is",NA,1,35.812
+"clima_superficie/cobertura_normalizada_disuelto.gpkg",66.34,"already_tiled","clima_superficie/cobertura_normalizada_disuelto__tiles",2,40.336
+"clima_superficie/vida_normalizada_disuelto.gpkg",15.371,"small_keep_as_is",NA,1,15.371
+"contexto_territorial/cuencas_normalizada_disuelto.gpkg",18.906,"small_keep_as_is",NA,1,18.906
+"contexto_territorial/distrital_normalizada_disuelto.gpkg",27.656,"small_keep_as_is",NA,1,27.656
+"contexto_territorial/poblados_normalizada.gpkg",20.941,"small_keep_as_is",NA,1,20.941
+"contexto_territorial/rios_normalizada_disuelto.gpkg",245.34,"tiled_ok","contexto_territorial/rios_normalizada_disuelto__tiles",12,46.07
+"fondo_mapa.gpkg",4.824,"small_keep_as_is",NA,1,4.824
+"medio_fisico/geologia_normalizada_disuelto.gpkg",1161.566,"already_tiled","medio_fisico/geologia_normalizada_disuelto__tiles",62,49.465
+"medio_fisico/geomorfologia_normalizada_disuelto.gpkg",983.547,"already_tiled","medio_fisico/geomorfologia_normalizada_disuelto__tiles",52,49.93
+"medio_fisico/hidrogeologia_normalizada_disuelto.gpkg",20.922,"small_keep_as_is",NA,1,20.922
+"medio_fisico/suelos_normalizada_disuelto.gpkg",2.688,"small_keep_as_is",NA,1,2.688

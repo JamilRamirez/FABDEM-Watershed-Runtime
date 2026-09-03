@@ -1,0 +1,3 @@
+"TILE_ID","FILE_NAME","RELATIVE_PATH","SIZE_MB","N_FEATURES","DEPTH","SOURCE_GPKG","SOURCE_LAYER","LAYER_OUTPUT_DIR"
+"cobertura_normalizada_disuelto_0001","cobertura_normalizada_disuelto_0001.gpkg","clima_superficie/cobertura_normalizada_disuelto__tiles/tiles/cobertura_normalizada_disuelto_0001.gpkg",26.141,38,0,"cobertura_normalizada_disuelto.gpkg","cobertura_normalizada_disuelto","clima_superficie/cobertura_normalizada_disuelto__tiles"
+"cobertura_normalizada_disuelto_0002","cobertura_normalizada_disuelto_0002.gpkg","clima_superficie/cobertura_normalizada_disuelto__tiles/tiles/cobertura_normalizada_disuelto_0002.gpkg",40.336,30,0,"cobertura_normalizada_disuelto.gpkg","cobertura_normalizada_disuelto","clima_superficie/cobertura_normalizada_disuelto__tiles"

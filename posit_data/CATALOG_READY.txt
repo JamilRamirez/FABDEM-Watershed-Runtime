@@ -1,0 +1,9 @@
+Completed: 2026-08-23 16:07:46
+Blocks: 21
+Reverse stripes: 1128
+Stream stripes: 1128
+Manifest rows: 2319
+Logical runtime assets GB: 1.604
+Remote base URL completed: YES
+Hydrology recalculated: NO
+Status: READY FOR GITHUB PUBLICATION

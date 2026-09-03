@@ -1,0 +1,9 @@
+Completed: 2026-08-29 20:53:20
+Source: medio_fisico/geologia_normalizada_disuelto.gpkg
+Source size MiB: 1161.566
+Target tile MiB: 45
+Maximum tile MiB: 50
+Number of tiles: 62
+Largest tile MiB: 49.465
+Original preserved: FALSE
+Status: OK

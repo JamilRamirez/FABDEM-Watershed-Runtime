@@ -1,0 +1,9 @@
+Completed: 2026-08-29 20:58:25
+Source: medio_fisico/geomorfologia_normalizada_disuelto.gpkg
+Source size MiB: 983.547
+Target tile MiB: 45
+Maximum tile MiB: 50
+Number of tiles: 52
+Largest tile MiB: 49.930
+Original preserved: FALSE
+Status: OK
