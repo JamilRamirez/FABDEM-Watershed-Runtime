@@ -482,6 +482,93 @@ lfs_files <- unique(
   ]
 )
 
+
+# Los GPKG fuente que ya tienen teselas terminadas no forman parte
+# del runtime de produccion. Se excluyen para no volver a publicar
+# gigabytes redundantes. La copia local no se modifica.
+redundant_lfs_files <- character(0)
+
+tiling_summary_file <- file.path(
+  "layers",
+  "layers_tiling_summary.csv"
+)
+
+if (file.exists(tiling_summary_file)) {
+
+  tiling_summary <- tryCatch(
+    utils::read.csv(
+      tiling_summary_file,
+      stringsAsFactors = FALSE,
+      check.names = FALSE
+    ),
+    error = function(e) NULL
+  )
+
+  if (
+    !is.null(tiling_summary) &&
+    all(
+      c(
+        "SOURCE",
+        "STATUS",
+        "OUTPUT_DIR"
+      ) %in% names(tiling_summary)
+    )
+  ) {
+
+    tiled_rows <- (
+      tiling_summary$STATUS %in%
+        c(
+          "tiled_ok",
+          "already_tiled"
+        )
+    ) &
+      !is.na(tiling_summary$OUTPUT_DIR) &
+      nzchar(
+        trimws(
+          as.character(
+            tiling_summary$OUTPUT_DIR
+          )
+        )
+      )
+
+    redundant_lfs_files <- normalize_rel(
+      file.path(
+        "layers",
+        as.character(
+          tiling_summary$SOURCE[
+            tiled_rows
+          ]
+        )
+      )
+    )
+
+    redundant_lfs_files <- intersect(
+      lfs_files,
+      redundant_lfs_files
+    )
+
+    if (length(redundant_lfs_files) > 0L) {
+      cat(
+        "\nGPKG fuente excluidos por tener teselas terminadas: ",
+        length(redundant_lfs_files),
+        "\n",
+        paste(
+          paste0("  - ", redundant_lfs_files),
+          collapse = "\n"
+        ),
+        "\n",
+        sep = ""
+      )
+
+      lfs_files <- setdiff(
+        lfs_files,
+        redundant_lfs_files
+      )
+    }
+  }
+}
+
+
 if (length(lfs_files) == 0L) {
   stop(
     "git lfs ls-files no devolvio ningun archivo."
