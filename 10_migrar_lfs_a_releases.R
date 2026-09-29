@@ -67,9 +67,10 @@ run_cmd <- function(
       stderr = stderr
     ),
     error = function(e) {
-      attr(character(0), "status") <- 999L
-      attr(character(0), "error_message") <- conditionMessage(e)
-      character(0)
+      z <- character(0)
+      attr(z, "status") <- 999L
+      attr(z, "error_message") <- conditionMessage(e)
+      z
     }
   )
 
