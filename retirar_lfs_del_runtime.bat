@@ -32,6 +32,38 @@ echo Rscript encontrado:
 echo   %RSCRIPT%
 echo.
 
+set "GH_EXE="
+
+for /f "delims=" %%I in ('where gh 2^>nul') do (
+  if not defined GH_EXE set "GH_EXE=%%I"
+)
+
+if not defined GH_EXE (
+  if exist "%ProgramFiles%\GitHub CLI\gh.exe" set "GH_EXE=%ProgramFiles%\GitHub CLI\gh.exe"
+)
+
+if not defined GH_EXE (
+  if exist "%LOCALAPPDATA%\Programs\GitHub CLI\gh.exe" set "GH_EXE=%LOCALAPPDATA%\Programs\GitHub CLI\gh.exe"
+)
+
+if not defined GH_EXE (
+  echo ERROR: no se encontro GitHub CLI ^(gh.exe^).
+  echo.
+  echo Instalalo en PowerShell con:
+  echo   winget install --id GitHub.cli
+  echo.
+  echo Luego vuelve a ejecutar este .bat.
+  pause
+  exit /b 1
+)
+
+for %%I in ("%GH_EXE%") do set "GH_DIR=%%~dpI"
+set "PATH=%GH_DIR%;%PATH%"
+
+echo GitHub CLI encontrado:
+echo   %GH_EXE%
+echo.
+
 "%RSCRIPT%" "11_retirar_lfs_del_runtime.R"
 
 if errorlevel 1 (
