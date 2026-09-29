@@ -274,8 +274,8 @@ release_exists <- function(tag) {
       "--repo",
       REPO
     ),
-    stdout = FALSE,
-    stderr = FALSE,
+    stdout = TRUE,
+    stderr = TRUE,
     fail = FALSE
   )
 
