@@ -49,10 +49,20 @@ run_cmd <- function(
     fail = TRUE
 ) {
 
+  quoted_args <- if (length(args) > 0L) {
+    vapply(
+      as.character(args),
+      shQuote,
+      character(1)
+    )
+  } else {
+    character(0)
+  }
+
   out <- tryCatch(
     system2(
       command,
-      args = args,
+      args = quoted_args,
       stdout = stdout,
       stderr = stderr
     ),
@@ -221,12 +231,6 @@ asset_name_for <- function(path) {
 
   out <- gsub(
     "[^A-Za-z0-9._-]+",
-    "_",
-    out
-  )
-
-  out <- gsub(
-    "_+",
     "_",
     out
   )
