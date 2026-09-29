@@ -33,7 +33,8 @@ MANIFEST_FILE <- "runtime_release_manifest.csv"
 MAX_ASSETS_PER_RELEASE <- 950L
 
 # FALSE = omite assets ya presentes con el mismo nombre/tamano.
-# TRUE  = vuelve a subirlos con --clobber.
+# TRUE  = fuerza su resubida. Las subidas nuevas usan --clobber
+# para poder reintentarse de forma idempotente tras un corte de red.
 FORCE_REUPLOAD <- FALSE
 
 
@@ -106,6 +107,137 @@ run_cmd <- function(
   list(
     status = as.integer(status),
     output = out
+  )
+}
+
+
+is_transient_network_error <- function(output) {
+
+  txt <- paste(
+    output,
+    collapse = "\n"
+  )
+
+  grepl(
+    paste(
+      c(
+        "getaddrinfo",
+        "could not resolve host",
+        "temporary failure",
+        "connection reset",
+        "connection refused",
+        "connection timed out",
+        "timeout",
+        "tls handshake timeout",
+        "unexpected eof",
+        "server misbehaving",
+        "network is unreachable",
+        "no such host"
+      ),
+      collapse = "|"
+    ),
+    txt,
+    ignore.case = TRUE
+  )
+}
+
+
+run_cmd_network_retry <- function(
+    command,
+    args = character(0),
+    attempts = 8L,
+    stdout = TRUE,
+    stderr = TRUE
+) {
+
+  attempts <- max(
+    1L,
+    as.integer(attempts)
+  )
+
+  waits <- c(
+    5,
+    10,
+    20,
+    30,
+    45,
+    60,
+    60
+  )
+
+  last <- NULL
+
+  for (attempt in seq_len(attempts)) {
+
+    result <- run_cmd(
+      command,
+      args,
+      stdout = stdout,
+      stderr = stderr,
+      fail = FALSE
+    )
+
+    last <- result
+
+    if (identical(result$status, 0L)) {
+      return(result)
+    }
+
+    transient <- is_transient_network_error(
+      result$output
+    )
+
+    if (
+      !isTRUE(transient) ||
+      attempt >= attempts
+    ) {
+      break
+    }
+
+    wait_seconds <- waits[
+      min(
+        attempt,
+        length(waits)
+      )
+    ]
+
+    cat(
+      sprintf(
+        "  Conexion temporalmente no disponible. Reintento %d/%d en %d s...\n",
+        attempt + 1L,
+        attempts,
+        wait_seconds
+      )
+    )
+
+    Sys.sleep(
+      wait_seconds
+    )
+  }
+
+  stop(
+    paste0(
+      "Fallo el comando despues de ",
+      attempts,
+      " intento(s):\n",
+      command,
+      " ",
+      paste(args, collapse = " "),
+      if (
+        !is.null(last) &&
+        length(last$output) > 0L
+      ) {
+        paste0(
+          "\n\nSalida:\n",
+          paste(
+            last$output,
+            collapse = "\n"
+          )
+        )
+      } else {
+        ""
+      }
+    )
   )
 }
 
@@ -296,7 +428,7 @@ ensure_release <- function(tag) {
 
   message("Creando Release: ", tag)
 
-  run_cmd(
+  run_cmd_network_retry(
     "gh",
     c(
       "release",
@@ -330,7 +462,7 @@ release_assets <- function(tag) {
     )
   }
 
-  result <- run_cmd(
+  result <- run_cmd_network_retry(
     "gh",
     c(
       "release",
@@ -344,8 +476,7 @@ release_assets <- function(tag) {
       ".assets[] | [.name, .size] | @tsv"
     ),
     stdout = TRUE,
-    stderr = TRUE,
-    fail = TRUE
+    stderr = TRUE
   )
 
   lines <- result$output
@@ -666,13 +797,6 @@ manifest$REMOTE_URL <- mapply(
 )
 
 
-manifest$MD5 <- unname(
-  tools::md5sum(
-    manifest$RELATIVE_PATH
-  )
-)
-
-
 # Un nombre de asset debe ser unico dentro de cada Release.
 dup_key <- paste(
   manifest$RELEASE_TAG,
@@ -888,25 +1012,16 @@ for (tag in tags) {
         mustWork = TRUE
       ),
       "--repo",
-      REPO
+      REPO,
+      "--clobber"
     )
 
-    if (
-      isTRUE(FORCE_REUPLOAD) ||
-      !is.na(hit)
-    ) {
-      args <- c(
-        args,
-        "--clobber"
-      )
-    }
-
-    run_cmd(
+    run_cmd_network_retry(
       "gh",
       args,
+      attempts = 8L,
       stdout = TRUE,
-      stderr = TRUE,
-      fail = TRUE
+      stderr = TRUE
     )
 
     unlink(
