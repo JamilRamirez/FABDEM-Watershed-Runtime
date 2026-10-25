@@ -6,3 +6,8 @@ subir_a_github.bat
 07_generar_catalogo_runtime_remoto_v1.R
 08_construir_fast_cache_block004_v1.R
 09_eliminar_hydrography_runtime_v1.R
+
+# Binarios servidos desde Releases; no añadirlos al repositorio
+*.tif
+*.gpkg
+*.rds
